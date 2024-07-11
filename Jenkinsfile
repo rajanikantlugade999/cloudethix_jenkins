@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    parameter {
+    parameters {
         choice(name: 'NAME', choices: ['One', 'Two', 'Three'], description: 'Pick NAME')
         choice(name: 'LASTNAME', choices: ['Hello ', 'Moto', 'Fello'], description: 'Pick LASTNAME')
         choice(name: 'SHOW', choices: ['true', 'false'], description: 'Pick SHOW')
