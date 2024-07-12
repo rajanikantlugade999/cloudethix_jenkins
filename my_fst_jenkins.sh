@@ -9,4 +9,4 @@ if [ "$SHOW" = "true" ]; then
 else
     echo "If you want to see the names, submit values for 3rd parameter"
 fi
-echo "Thanks"
+echo "Thank you"
