@@ -1,34 +1,40 @@
+// Declarative //
 pipeline {
     agent any
-    parameter {
-        choice(name: 'NAME', choices: ['One', 'Two', 'Three'], description: 'Pick NAME')
-        choice(name: 'LASTNAME', choices: ['Hello ', 'Moto', 'Fello'], description: 'Pick LASTNAME')
-        choice(name: 'SHOW', choices: ['true', 'false'], description: 'Pick SHOW')
-    }
+    environment {
+                    dev_acc_id = "163636363"
+                    qa_acc_id = "849494833"
+
+     }
+     parameters {
+        choice(name: 'ACCOUNT', choices: ['DEV', 'QA'], description: 'Pick AWS ACCOUNT')
+    }           
     stages {
-        stage('Build') {
+        stage('Deploy in DEV') {
+            when {
+                expression {
+                params.ACCOUNT == 'DEV'
+                }
+            }
             steps {
-                sh 'echo "Build stage executing shell scripting my_fst_jenkins.sh"'
-                sh ' bash my_fst_jenkins.sh ${param.NAME} ${param.LASTNAME} ${param.SHOW}'
+                sh "echo Building the Project in dev aws account ${env.dev_acc_id}"
             }
         }
-        stage('Test') {
-            steps {
-                    sh 'echo "Running test scripts from QA team"'
-
-            } 
-        }
-        stage('Deploy') {
-            steps {
-                    sh 'echo "Deploying on K8S Cluster"'
-
+        stage('Deploy in QA') {
+            when {
+                expression {
+                params.ACCOUNT == 'QA'
+                }
+    }
+        steps {
+                sh "echo Building the Project in QA aws account ${env.qa_acc_id}"
             }
         }
+    }
     post { 
         always { 
-            echo 'Deleting workplace'
-            deleteDir()
+            echo 'Deleting Workplace!'
         }
     }
-    }
 }
+
