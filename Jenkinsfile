@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Example') {
             input {
-                message "Should we continue?"
+                message "Proceed"
                 ok "Yes, we should."
                 submitter "alice,bob"
                 parameters {
