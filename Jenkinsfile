@@ -1,40 +1,57 @@
-// Declarative //
 pipeline {
     agent any
+    
+    parameters {
+        string(name: 'ACCOUNT_NUMBER', defaultValue: '12345678', description: 'Enter the account number')
+    }
+    
     environment {
-                    dev_acc_id = "163636363"
-                    qa_acc_id = "849494833"
+        ACCOUNT_NUMBER = "${params.ACCOUNT_NUMBER}"
+    }
 
-     }
-     parameters {
-        choice(name: 'ACCOUNT', choices: ['DEV', 'QA'], description: 'Pick AWS ACCOUNT')
-    }           
     stages {
-        stage('Deploy in DEV') {
-            when {
-                expression {
-                params.ACCOUNT == 'DEV'
-                }
-            }
+        stage('Initialize') {
             steps {
-                sh "echo Building the Project in dev aws account ${env.dev_acc_id}"
+                echo "Initializing pipeline with account number: ${ACCOUNT_NUMBER}"
             }
         }
-        stage('Deploy in QA') {
-            when {
-                expression {
-                params.ACCOUNT == 'QA'
+
+        stage('Validate Account Number') {
+            steps {
+                script {
+                    if (!isValidAccountNumber(ACCOUNT_NUMBER)) {
+                        error "Invalid account number: ${ACCOUNT_NUMBER}"
+                    }
                 }
-    }
-        steps {
-                sh "echo Building the Project in QA aws account ${env.qa_acc_id}"
             }
         }
-    }
-    post { 
-        always { 
-            echo 'Deleting Workplace!'
+
+        stage('Process Account Number') {
+            steps {
+                script {
+                    processAccountNumber(ACCOUNT_NUMBER)
+                }
+            }
+        }
+
+        stage('Finalize') {
+            steps {
+                echo "Pipeline execution completed for account number: ${ACCOUNT_NUMBER}"
+            }
         }
     }
 }
 
+def isValidAccountNumber(accountNumber) {
+    // Simple validation: check if the account number is numeric and has 8 digits
+    return accountNumber.isNumber() && accountNumber.length() == 8
+}
+
+def processAccountNumber(accountNumber) {
+    // Sample processing logic
+    if (accountNumber == '12345678') {
+        echo "Default account number detected: ${accountNumber}"
+    } else {
+        echo "Processing account number: ${accountNumber}"
+    }
+}
